@@ -2,8 +2,7 @@ name: Keep Render App Awake
 
 on:
   schedule:
-    - cron: "*/12 23 * * *"  # 9–10 AM AEST (prev day UTC 23)
-    - cron: "*/12 0-7 * * *" # 10 AM–5 PM AEST
+    - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
 jobs:
