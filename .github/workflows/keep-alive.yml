@@ -1,27 +1,17 @@
-name: Keep Render App Awake
+name: Keep Render Site Alive
 
 on:
   schedule:
-    - cron: "*/14 23,0-6 * * *"
-  workflow_dispatch: {}
+    # Runs every 5 minutes
+    - cron: '*/12 * * * *'
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
     steps:
-      - name: Random jitter
-        run: sleep $((RANDOM % 55))
-
-      - name: Ping Render app
-        env:
-          URL: ${{ secrets.RENDER_URL }}
+      - name: Ping Render website
         run: |
-          if [ -z "$URL" ]; then
-            echo "Missing RENDER_URL secret"; exit 1
-          fi
-          code=$(curl -I -s -o /dev/null -w "%{http_code}" -A "GHKeepAlive/1.0" "$URL" || true)
-          if [ "$code" = "000" ] || [ "$code" -ge 400 ]; then
-            code=$(curl -s -o /dev/null -w "%{http_code}" -A "GHKeepAlive/1.0" "$URL" || true)
-          fi
-          echo "HTTP $code"
+          echo "🔄 Pinging Render site at $(date)"
+          curl -s -o /dev/null -w "Status: %{http_code}\n" https://portfolio-5ryq.onrender.com
+          echo "✅ Ping completed at $(date)"
