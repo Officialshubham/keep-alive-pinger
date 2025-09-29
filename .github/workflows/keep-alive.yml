@@ -2,16 +2,26 @@ name: Keep Render Site Alive
 
 on:
   schedule:
-    # Runs every 5 minutes
     - cron: '*/12 * * * *'
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Render website
+      - name: Ping multiple times to ensure wake-up
         run: |
-          echo "🔄 Pinging Render site at $(date)"
-          curl -s -o /dev/null -w "Status: %{http_code}\n" https://portfolio-5ryq.onrender.com
-          echo "✅ Ping completed at $(date)"
+          echo "🔄 Starting ping sequence at $(date)"
+          
+          # First ping - wakes the service
+          curl -s -o /dev/null -w "First ping: %{http_code}\n" https://portfolio-5ryq.onrender.com
+          sleep 10
+          
+          # Second ping - ensures it stays awake
+          curl -s -o /dev/null -w "Second ping: %{http_code}\n" https://portfolio-5ryq.onrender.com
+          sleep 5
+          
+          # Third ping - confirms it's awake
+          curl -s -o /dev/null -w "Third ping: %{http_code}\n" https://portfolio-5ryq.onrender.com
+          
+          echo "✅ Ping sequence completed at $(date)"
